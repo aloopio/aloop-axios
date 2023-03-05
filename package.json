@@ -1,0 +1,7 @@
+{
+  "name": "aloop-axios",
+  "version": "1.0.8",
+  "devDependencies": {
+    "axios": "^1.3.4"
+  }
+}
