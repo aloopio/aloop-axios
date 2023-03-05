@@ -133,13 +133,13 @@ class Request {
         });
       }
 
-      if (this.events.onSuccess) this.events.onSuccess(res);
+      if (this.events.onSuccess) return await this.events.onSuccess(res);
       else return {
         success: true,
         response: res.data
       };
     } catch (error) {
-      if (this.events.onError) this.events.onError(error);
+      if (this.events.onError) return await this.events.onError(error);
       else return {
         success: false,
         status: error?.response?.status,
