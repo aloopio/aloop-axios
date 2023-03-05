@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-export default () => {
+export default (events = {}) => {
   return {
-    events: {},
+    events,
     create(opts, events = {}){
       events = {
         ...this.events,
