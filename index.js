@@ -41,8 +41,10 @@ export default (options = {}, events = {}) => {
           method: '',
           ...__options,
           keys: {
-            auth: '__a',
-            view: '__vt',
+            storage_auth: '__a',
+            storage_view_id: '__vid',
+            request_auth: 'authorization',
+            request_view_id: 'view-id',
             ...(__options.keys || {})
           },
         },
@@ -115,24 +117,24 @@ export default (options = {}, events = {}) => {
         },
       
         authorization(token){
-          token = token || localStorage.getItem(this.__options.keys.auth);
+          token = token || localStorage.getItem(this.__options.keys.storage_auth);
       
           if (token) {
-            this.__options.headers.authorization = token;
+            this.__options.headers[this.__options.keys.request_auth] = token;
           }
       
           return this;
         },
         
         viewid(){
-          let viewer = localStorage.getItem(this.__options.keys.view);
+          let viewer = localStorage.getItem(this.__options.keys.storage_view_id);
       
           if (!viewer) {
             viewer = this.makeid('30');
-            localStorage.setItem(this.__options.keys.view, viewer);
+            localStorage.setItem(this.__options.keys.storage_view_id, viewer);
           }
       
-          this.__options.headers.__vt = viewer;
+          this.__options.headers[this.__options.keys.request_view_id] = viewer;
       
           return this;
         },
