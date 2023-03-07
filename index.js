@@ -1,12 +1,34 @@
 import axios from 'axios';
 
-export default (events = {}) => {
+export default (options = {}, events = {}) => {
   return {
-    events,
-    create(opts, events = {}){
-      events = {
-        ...this.events,
+    ev: events,
+    opts: options,
+    events(events, replace = false){
+      if (!replace) this.ev = {
+        ...this.ev,
         ...events
+      };
+      else this.ev = events;
+    },
+
+    options(options, replace = false){
+      if (!replace) this.opts = {
+        ...this.opts,
+        ...options
+      };
+      else this.opts = options;
+    },
+
+    create(options, events = {}){
+      let ev = {
+        ...this.ev,
+        ...events
+      };
+
+      let opts = {
+        ...this.opts,
+        ...options
       };
   
       let ob = {
@@ -17,13 +39,21 @@ export default (events = {}) => {
           path: '',
           domain: '',
           method: '',
+          ...opts,
           keys: {
             auth: '__a',
-            view: '__vt'
+            view: '__vt',
+            ...(opts.keys || {})
           },
-          ...opts
         },
-        events,
+        ev,
+
+        events(e){
+          this.ev = {
+            ...this.ev,
+            ...e
+          };
+        },
       
         makeid(length) {
           let result = '';
@@ -109,7 +139,7 @@ export default (events = {}) => {
       
         async call() {
           try {
-            if (this.events.beforeRequest) this.events.beforeRequest(this, this.opts);
+            if (this.ev.beforeRequest) this.ev.beforeRequest(this, this.opts);
             let method = this.opts.method.toUpperCase();
             let { payload, headers, config, path, domain } = this.opts;
             let res;
@@ -134,13 +164,13 @@ export default (events = {}) => {
               });
             }
       
-            if (this.events.onSuccess) return await this.events.onSuccess(res);
+            if (this.ev.onSuccess) return await this.ev.onSuccess(res);
             else return {
               success: true,
               response: res.data
             };
           } catch (error) {
-            if (this.events.onError) return await this.events.onError(error);
+            if (this.ev.onError) return await this.ev.onError(error);
             else return {
               success: false,
               status: error ? (error.response ? error.response.status : null) : null,
