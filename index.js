@@ -2,55 +2,55 @@ import axios from 'axios';
 
 export default (options = {}, events = {}) => {
   return {
-    ev: events,
-    opts: options,
+    __events: events,
+    __options: options,
     events(events, replace = false){
-      if (!replace) this.ev = {
-        ...this.ev,
+      if (!replace) this.__events = {
+        ...this.__events,
         ...events
       };
-      else this.ev = events;
+      else this.__events = events;
     },
 
     options(options, replace = false){
-      if (!replace) this.opts = {
-        ...this.opts,
+      if (!replace) this.__options = {
+        ...this.__options,
         ...options
       };
-      else this.opts = options;
+      else this.__options = options;
     },
 
     create(options, events = {}){
-      let ev = {
-        ...this.ev,
+      let __events = {
+        ...this.__events,
         ...events
       };
 
-      let opts = {
-        ...this.opts,
+      let __options = {
+        ...this.__options,
         ...options
       };
   
       let ob = {
-        opts: {
+        __options: {
           headers: {},
           payload: {},
           config: {},
           path: '',
           domain: '',
           method: '',
-          ...opts,
+          ...__options,
           keys: {
             auth: '__a',
             view: '__vt',
-            ...(opts.keys || {})
+            ...(__options.keys || {})
           },
         },
-        ev,
+        __events,
 
         events(e){
-          this.ev = {
-            ...this.ev,
+          this.__events = {
+            ...this.__events,
             ...e
           };
         },
@@ -66,19 +66,19 @@ export default (options = {}, events = {}) => {
         },
       
         path(p) {
-          this.opts.path = p;
+          this.__options.path = p;
           return this;
         },
       
         domain(d){
-          this.opts.domain = d;
+          this.__options.domain = d;
           return this;
         },
       
         config(config, repl) {
-          if (repl) this.opts.config = config;
-          else this.opts.config = {
-            ...this.opts.config,
+          if (repl) this.__options.config = config;
+          else this.__options.config = {
+            ...this.__options.config,
             ...config
           };
       
@@ -86,8 +86,8 @@ export default (options = {}, events = {}) => {
         },
       
         keys(keys){
-          this.opts.keys = {
-            ...this.opts.keys,
+          this.__options.keys = {
+            ...this.__options.keys,
             ...keys
           };
       
@@ -95,9 +95,9 @@ export default (options = {}, events = {}) => {
         },
       
         headers(headers, repl) {
-          if (repl) this.opts.headers = headers;
-          else this.opts.headers = {
-            ...this.opts.headers,
+          if (repl) this.__options.headers = headers;
+          else this.__options.headers = {
+            ...this.__options.headers,
             ...headers
           };
       
@@ -105,43 +105,43 @@ export default (options = {}, events = {}) => {
         },
       
         method(name) {
-          this.opts.method = name;
+          this.__options.method = name;
           return this;
         },
       
         payload(payload) {
-          this.opts.payload = payload;
+          this.__options.payload = payload;
           return this;
         },
       
         authorization(token){
-          token = token || localStorage.getItem(this.opts.keys.auth);
+          token = token || localStorage.getItem(this.__options.keys.auth);
       
           if (token) {
-            this.opts.headers.authorization = token;
+            this.__options.headers.authorization = token;
           }
       
           return this;
         },
         
         viewid(){
-          let viewer = localStorage.getItem(this.opts.keys.view);
+          let viewer = localStorage.getItem(this.__options.keys.view);
       
           if (!viewer) {
             viewer = this.makeid('30');
-            localStorage.setItem(this.opts.keys.view, viewer);
+            localStorage.setItem(this.__options.keys.view, viewer);
           }
       
-          this.opts.headers.__vt = viewer;
+          this.__options.headers.__vt = viewer;
       
           return this;
         },
       
         async call() {
           try {
-            if (this.ev.beforeRequest) this.ev.beforeRequest(this, this.opts);
-            let method = this.opts.method.toUpperCase();
-            let { payload, headers, config, path, domain } = this.opts;
+            if (this.__events.beforeRequest) this.__events.beforeRequest(this, this.__options);
+            let method = this.__options.method.toUpperCase();
+            let { payload, headers, config, path, domain } = this.__options;
             let res;
             let url = `${domain}/${path}`;
       
@@ -164,13 +164,13 @@ export default (options = {}, events = {}) => {
               });
             }
       
-            if (this.ev.onSuccess) return await this.ev.onSuccess(res);
+            if (this.__events.onSuccess) return await this.__events.onSuccess(res);
             else return {
               success: true,
               response: res.data
             };
           } catch (error) {
-            if (this.ev.onError) return await this.ev.onError(error);
+            if (this.__events.onError) return await this.__events.onError(error);
             else return {
               success: false,
               status: error ? (error.response ? error.response.status : null) : null,
@@ -181,7 +181,7 @@ export default (options = {}, events = {}) => {
         }
       };
   
-      if (ob.events.onCreate) ob.events.onCreate(ob, opts);
+      if (ob.__events.onCreate) ob.__events.onCreate(ob, __options);
   
       return ob;
     }
