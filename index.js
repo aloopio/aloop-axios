@@ -77,7 +77,7 @@ export default (options = {}, events = {}) => {
           return this;
         },
       
-        config(config, repl) {
+        config(config, repl = false) {
           if (repl) this.__options.config = config;
           else this.__options.config = {
             ...this.__options.config,
@@ -96,7 +96,7 @@ export default (options = {}, events = {}) => {
           return this;
         },
       
-        headers(headers, repl) {
+        headers(headers, repl = false) {
           if (repl) this.__options.headers = headers;
           else this.__options.headers = {
             ...this.__options.headers,
@@ -126,8 +126,9 @@ export default (options = {}, events = {}) => {
           return this;
         },
         
-        viewid(){
-          let viewer = localStorage.getItem(this.__options.keys.storage_view_id);
+        viewid(vid, save = false){
+          if (vid && save) localStorage.setItem(this.__options.keys.storage_view_id, vid);
+          let viewer = vid || localStorage.getItem(this.__options.keys.storage_view_id);
       
           if (!viewer) {
             viewer = this.makeid('30');
