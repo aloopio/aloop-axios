@@ -42,9 +42,13 @@ export default (options = {}, events = {}) => {
           ...__options,
           keys: {
             storage_auth: '__a',
-            storage_view_id: '__vid',
             request_auth: 'authorization',
+
             request_view_id: 'view-id',
+            storage_view_id: '__vid',
+
+            storage_device_token: '__dv',
+            request_device_token: 'device-token',
             ...(__options.keys || {})
           },
         },
@@ -116,7 +120,8 @@ export default (options = {}, events = {}) => {
           return this;
         },
       
-        authorization(token){
+        authorization(token, save = false){
+          if (token && save) localStorage.setItem(this.__options.keys.storage_auth, token);
           token = token || localStorage.getItem(this.__options.keys.storage_auth);
       
           if (token) {
@@ -136,6 +141,17 @@ export default (options = {}, events = {}) => {
           }
       
           this.__options.headers[this.__options.keys.request_view_id] = viewer;
+      
+          return this;
+        },
+
+        deviceToken(token, save = false){
+          if (token && save) localStorage.setItem(this.__options.keys.storage_device_token, token);
+          token = token || localStorage.getItem(this.__options.keys.storage_device_token);
+      
+          if (token) {
+            this.__options.headers[this.__options.keys.request_device_token] = token;
+          }
       
           return this;
         },
