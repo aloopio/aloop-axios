@@ -46,9 +46,6 @@ export default (options = {}, events = {}) => {
 
             request_view_id: 'view-id',
             storage_view_id: '__vid',
-
-            storage_device_token: '__dv',
-            request_device_token: 'device-token',
             ...(__options.keys || {})
           },
         },
@@ -145,17 +142,6 @@ export default (options = {}, events = {}) => {
           return this;
         },
 
-        deviceToken(token, save = false){
-          if (token && save) localStorage.setItem(this.__options.keys.storage_device_token, token);
-          token = token || localStorage.getItem(this.__options.keys.storage_device_token);
-      
-          if (token) {
-            this.__options.headers[this.__options.keys.request_device_token] = token;
-          }
-      
-          return this;
-        },
-      
         async call() {
           try {
             if (this.__events.beforeRequest) this.__events.beforeRequest(this, this.__options);
