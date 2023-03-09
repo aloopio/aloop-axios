@@ -58,16 +58,6 @@ export default (options = {}, events = {}) => {
           };
         },
       
-        makeid(length) {
-          let result = '';
-          let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-          let charactersLength = characters.length;
-          for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-          }
-          return result;
-        },
-      
         path(p) {
           this.__options.path = p;
           return this;
@@ -132,12 +122,7 @@ export default (options = {}, events = {}) => {
           if (vid && save) localStorage.setItem(this.__options.keys.storage_view_id, vid);
           let viewer = vid || localStorage.getItem(this.__options.keys.storage_view_id);
       
-          if (!viewer) {
-            viewer = this.makeid('30');
-            localStorage.setItem(this.__options.keys.storage_view_id, viewer);
-          }
-      
-          this.__options.headers[this.__options.keys.request_view_id] = viewer;
+          if (viewer) this.__options.headers[this.__options.keys.request_view_id] = viewer;
       
           return this;
         },
