@@ -43,8 +43,10 @@ export default (options = {}, events = {}) => {
           keys: {
             storage_auth: '__a',
             request_auth: 'authorization',
+            response_auth: 'authorization',
 
             request_view_id: 'view-id',
+            response_view_id: 'view-id',
             storage_view_id: '__vid',
             ...(__options.keys || {})
           },
@@ -153,13 +155,14 @@ export default (options = {}, events = {}) => {
                 headers
               });
             }
-      
+            if (this.__events.onResponse) this.__events.onResponse(res);
             if (this.__events.onSuccess) return await this.__events.onSuccess(res);
             else return {
               success: true,
               response: res.data
             };
           } catch (error) {
+            if (this.__events.onResponse) this.__events.onResponse(error);
             if (this.__events.onError) return await this.__events.onError(error);
             else return {
               success: false,
