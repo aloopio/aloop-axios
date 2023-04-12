@@ -48,6 +48,10 @@ export default (options = {}, events = {}) => {
             request_view_id: 'view-id',
             response_view_id: 'view-id',
             storage_view_id: '__vid',
+
+            request_locale: 'locale',
+            response_locale: 'locale',
+            storage_locale: '__locale',
             ...(__options.keys || {})
           },
         },
@@ -125,6 +129,15 @@ export default (options = {}, events = {}) => {
           let viewer = vid || localStorage.getItem(this.__options.keys.storage_view_id);
       
           if (viewer) this.__options.headers[this.__options.keys.request_view_id] = viewer;
+      
+          return this;
+        },
+
+        locale(data, save = false){
+          if (data && save) localStorage.setItem(this.__options.keys.storage_locale, data);
+          let locale = data || localStorage.getItem(this.__options.keys.storage_locale);
+      
+          if (locale) this.__options.headers[this.__options.keys.request_locale] = locale;
       
           return this;
         },
