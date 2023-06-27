@@ -155,6 +155,11 @@ export default (options = {}, events = {}) => {
                 ...config,
                 headers
               });
+            } else if (method === 'PUT') {
+              res = await axios.put(url, payload, {
+                ...config,
+                headers
+              });
             } else if (method === 'DELETE') {
               res = await axios.delete(url, {
                 ...config,
